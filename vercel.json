@@ -1,5 +1,7 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "buildCommand": "python -m pygbag --build --no_opt --disable-sound-format-error .",
+  "installCommand": "pip install -r requirements.txt",
+  "buildCommand": "python -m pygbag --build --no_opt .",
   "outputDirectory": "build/web"
 }
