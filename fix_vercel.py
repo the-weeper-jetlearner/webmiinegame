@@ -54,6 +54,17 @@ with open(index, encoding="utf-8") as f:
 for old in sorted(old_names):
     if old:
         html = html.replace(old, NEW)
+# Auto-start without click: bypass the "MEDIA USER ACTION REQUIRED" gate.
+# ume_block=1 + autorun=0 leaves a gray page until the user clicks the canvas.
+html = html.replace("ume_block : 1", "ume_block : 0")
+html = html.replace("autorun : 0", "autorun : 1")
+# browserfs.min.js 404s on the 0.9.3 CDN ("BrowserFS not found"); the game
+# runs fine on Emscripten MEMFS, so drop the dead script tag instead of
+# letting it error in the console.
+html = html.replace(
+    '<script src="https://pygame-web.github.io/cdn/0.9.3//browserfs.min.js"></script>',
+    "<!-- browserfs removed: 404 on CDN, not required -->",
+)
 with open(index, "w", encoding="utf-8") as f:
     f.write(html)
 print("patched index.html old names:", sorted(old_names) or "none")
