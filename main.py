@@ -1,3 +1,9 @@
+# /// script
+# dependencies = [
+#   "pygame-ce",
+# ]
+# ///
+
 import asyncio
 
 from game import Game
