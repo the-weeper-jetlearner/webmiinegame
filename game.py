@@ -255,7 +255,12 @@ class Game:
         global MINING_DISTANCE, ORE_PLAYER_SEPARATION
 
         pygame.init()
-        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        if is_browser_runtime():
+            self.screen = pygame.display.set_mode(
+                (SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SCALED
+            )
+        else:
+            self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         SCREEN_WIDTH, SCREEN_HEIGHT = self.screen.get_size()
         WORLD_LEFT = max(80, int(SCREEN_WIDTH * 0.055))
         WORLD_RIGHT = SCREEN_WIDTH - WORLD_LEFT
