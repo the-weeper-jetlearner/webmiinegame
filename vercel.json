@@ -2,6 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "installCommand": "pip install --break-system-packages -r requirements.txt",
-  "buildCommand": "python -m pygbag --build --no_opt .",
+  "buildCommand": "python -m pygbag --build --no_opt . && python fix_vercel.py",
   "outputDirectory": "build/web"
 }
