@@ -255,13 +255,13 @@ class Game:
         global MINING_DISTANCE, ORE_PLAYER_SEPARATION
 
         pygame.init()
+        # Web (pygbag/emscripten) needs a fixed window, no FULLSCREEN/SCALED flags.
+        # Desktop keeps fullscreen for the original experience.
         if is_browser_runtime():
-            self.screen = pygame.display.set_mode(
-                (SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SCALED
-            )
+            self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         else:
             self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-        SCREEN_WIDTH, SCREEN_HEIGHT = self.screen.get_size()
+            SCREEN_WIDTH, SCREEN_HEIGHT = self.screen.get_size()
         WORLD_LEFT = max(80, int(SCREEN_WIDTH * 0.055))
         WORLD_RIGHT = SCREEN_WIDTH - WORLD_LEFT
         WORLD_GROUND = int(SCREEN_HEIGHT * 0.76)
@@ -327,12 +327,16 @@ class Game:
         dark_icon = pygame.transform.scale(image, (40, 40))
         icon = dark_icon.copy()
         dark_icon.fill((60, 60, 60, 255), special_flags=pygame.BLEND_RGBA_MULT)
+        try:
+            avg = pygame.transform.average_color(image)
+        except Exception:
+            avg = (200, 200, 200, 255)
         return Ore(
             name=name,
             icon=icon,
             dark_icon=dark_icon,
             image=pygame.transform.scale(image, (256, 256)),
-            color=pygame.transform.average_color(image),
+            color=avg,
             health=health,
             coin=coin,
             level=level,
@@ -785,11 +789,22 @@ class Renderer:
 
     def __init__(self, screen):
         self.screen = screen
-        self.font = pygame.font.SysFont("segoeui", 16)
-        self.small = pygame.font.SysFont("segoeui", 13)
-        self.mid = pygame.font.SysFont("segoeui", 21, True)
-        self.big = pygame.font.SysFont("segoeui", 30, True)
-        self.title_font = pygame.font.SysFont("segoeui", 17, True)
+        def _font(size, bold=False):
+            for name in ("segoeui", "arial", "dejavu", None):
+                try:
+                    if name is None:
+                        return pygame.font.Font(None, size)
+                    f = pygame.font.SysFont(name, size, bold)
+                    if f is not None:
+                        return f
+                except Exception:
+                    continue
+            return pygame.font.Font(None, size)
+        self.font = _font(16)
+        self.small = _font(13)
+        self.mid = _font(21, True)
+        self.big = _font(30, True)
+        self.title_font = _font(17, True)
         self.world_rect = screen.get_rect()
         self.world_scale = SCREEN_HEIGHT / 640
         self.panel_width = min(560, SCREEN_WIDTH - 140)
