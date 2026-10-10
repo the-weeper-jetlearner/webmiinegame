@@ -1,5 +1,5 @@
 {
   "framework": null,
-  "buildCommand": "python -m pip install -r requirements.txt && python -m pygbag --build --disable-sound-format-error .",
+  "buildCommand": "python -m pygbag --build --disable-sound-format-error .",
   "outputDirectory": "build/web"
 }
